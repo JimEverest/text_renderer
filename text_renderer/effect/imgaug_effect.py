@@ -3,6 +3,7 @@ from typing import Tuple
 from PIL import Image
 from imgaug.augmenters import Augmenter
 import imgaug.augmenters as iaa
+from imgaug import parameters as iap
 import numpy as np
 
 from text_renderer.utils.bbox import BBox
@@ -66,3 +67,32 @@ class MotionBlur(ImgAugEffect):
         """
 
         super().__init__(p, iaa.MotionBlur(k, angle, direction))
+
+
+
+
+
+class SaltAndPepper(ImgAugEffect):
+    def __init__(self, p=1.0, noise=0.1):
+        super().__init__(p, iaa.SaltAndPepper(noise))
+
+
+class CoarseDropout(ImgAugEffect):
+#https://imgaug.readthedocs.io/en/latest/source/overview/arithmetic.html#coarsedropout
+    def __init__(self, p=1.0,noise=0.02, size_percent=0.5):
+        super().__init__(p, iaa.CoarseDropout(noise,size_percent))
+
+class Snow(ImgAugEffect):
+# https://imgaug.readthedocs.io/en/latest/source/overview/imgcorruptlike.html#snow
+    def __init__(self, p=1.0,level=1):
+        super().__init__(p, iaa.imgcorruptlike.Snow(severity=level))
+
+class JpegCompression(ImgAugEffect):
+# https://imgaug.readthedocs.io/en/latest/source/overview/imgcorruptlike.html#snow
+    def __init__(self, p=1.0,level=1):
+        super().__init__(p, iaa.imgcorruptlike.JpegCompression(severity=level))
+
+class SnowFlakes(ImgAugEffect):
+# https://imgaug.readthedocs.io/en/latest/source/overview/weather.html#snowflakes
+    def __init__(self, p=1.0,level=1):
+        super().__init__(p, iaa.Snowflakes(flake_size=(0.1, 0.4), speed=(0.01, 0.05))
