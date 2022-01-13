@@ -43,7 +43,8 @@ def get_char_corpus():
             filter_by_chars=True,
             chars_file=CHAR_DIR / "chn.txt",
             length=(5, 10),
-            char_spacing=(-0.3, 1.3),
+            # char_spacing=(-0.3, 1.3),
+            char_spacing=(0, 0.4),
             **font_cfg
         ),
     )
@@ -68,13 +69,13 @@ def base_cfg(name: str, corpus, corpus_effects=None, layout_effects=None, layout
 
 
 
-def imgaug_emboss_example():
+def imgaug_emboss_example2():
     return base_cfg(
         inspect.currentframe().f_code.co_name,
         corpus=get_char_corpus(),
         corpus_effects=Effects(
             [
-                # Padding(p=1, w_ratio=[0.2, 0.21], h_ratio=[0.7, 0.71], center=True),
+                Padding(p=1, w_ratio=[0.2, 0.21], h_ratio=[0.7, 0.71], center=True),
                 # Emboss(p=0.9,alpha=(0.9, 1.0), strength=(1.5, 1.6)),
                 # CoarseDropout(p=1.0,noise=0.99, size_percent=1.0),
                 # JpegCompression(level=2)
@@ -84,7 +85,8 @@ def imgaug_emboss_example():
         ), 
         render_effects=Effects(
             [
-                JpegCompression(level=2)
+                JpegCompression(level=2),
+                SnowFlakes()
             ]
         )
     )
@@ -97,8 +99,8 @@ configs = [
     # rand_data(),
     # eng_word_data(),
     # same_line_data(),
-    # extra_text_line_data(),
-    imgaug_emboss_example()
+    # extra_text_line_data(),hi
+    imgaug_emboss_example2()
 ]
 # fmt: on
 
