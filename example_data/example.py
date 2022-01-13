@@ -47,7 +47,7 @@ def get_char_corpus():
 
 
 def base_cfg(
-    name: str, corpus, corpus_effects=None, layout_effects=None, layout=None, gray=True
+    name: str, corpus, corpus_effects=None, layout_effects=None, layout=None, gray=True, render_effects=None
 ):
     return GeneratorCfg(
         num_image=50,
@@ -60,6 +60,7 @@ def base_cfg(
             layout=layout,
             corpus=corpus,
             corpus_effects=corpus_effects,
+            render_effects=render_effects
         ),
     )
 

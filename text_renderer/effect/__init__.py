@@ -5,7 +5,7 @@ from .dropout_horizontal import DropoutHorizontal
 from .dropout_vertical import DropoutVertical
 from .line import Line
 from .padding import Padding
-from .imgaug_effect import ImgAugEffect, Emboss, MotionBlur
+from .imgaug_effect import ImgAugEffect, Emboss, MotionBlur,CoarseDropout,Snow,JpegCompression,SnowFlakes
 
 
 __all__ = [
@@ -20,5 +20,9 @@ __all__ = [
     "Padding",
     "ImgAugEffect",
     "Emboss",
-    "MotionBlur"
+    "MotionBlur",
+    "CoarseDropout",
+    "Snow",
+    "JpegCompression",
+    "SnowFlakes",
 ]

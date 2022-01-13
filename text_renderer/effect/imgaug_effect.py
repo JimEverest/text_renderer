@@ -27,7 +27,26 @@ class ImgAugEffect(Effect):
 
         word_img = np.array(img)
         # TODO: test self.aug.augment_bounding_boxes()
+
+        auged=None
+        try:
+            auged = self.aug.augment_image(word_img)
+        except:
+            img_rgb = word_img[:,:,0:3]
+            img_alpha = word_img[:,:,3]
+            auged = self.aug.augment_image(img_rgb)
+
+            auged_rgba = np.dstack((auged,img_alpha))
+            auged = auged_rgba
+
+        return Image.fromarray(auged), text_bbox
+
+
+        word_img = np.array(img)
+        # TODO: test self.aug.augment_bounding_boxes()
         return Image.fromarray(self.aug.augment_image(word_img)), text_bbox
+
+
 
 
 class Emboss(ImgAugEffect):
@@ -80,7 +99,7 @@ class SaltAndPepper(ImgAugEffect):
 class CoarseDropout(ImgAugEffect):
 #https://imgaug.readthedocs.io/en/latest/source/overview/arithmetic.html#coarsedropout
     def __init__(self, p=1.0,noise=0.02, size_percent=0.5):
-        super().__init__(p, iaa.CoarseDropout(noise,size_percent))
+        super().__init__(p, iaa.CoarseDropout(noise,size_percent=size_percent))
 
 class Snow(ImgAugEffect):
 # https://imgaug.readthedocs.io/en/latest/source/overview/imgcorruptlike.html#snow
@@ -92,7 +111,13 @@ class JpegCompression(ImgAugEffect):
     def __init__(self, p=1.0,level=1):
         super().__init__(p, iaa.imgcorruptlike.JpegCompression(severity=level))
 
+
 class SnowFlakes(ImgAugEffect):
 # https://imgaug.readthedocs.io/en/latest/source/overview/weather.html#snowflakes
-    def __init__(self, p=1.0,level=1):
-        super().__init__(p, iaa.Snowflakes(flake_size=(0.1, 0.4), speed=(0.01, 0.05))
+    def __init__(self, p=1.0,flake_size=(0.1, 0.4), speed=(0.01, 0.05)):
+        super().__init__(p, iaa.Snowflakes(flake_size=flake_size, speed=speed))
+
+
+
+
+
