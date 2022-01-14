@@ -76,5 +76,6 @@ class EnumCorpus(Corpus):
                 )
 
     def get_text(self):
-        text = random_choice(self.texts, self.cfg.num_pick)
+        length = np.random.randint(*self.cfg.num_pick)
+        text = random_choice(self.texts, length)
         return self.cfg.join_str.join(text)

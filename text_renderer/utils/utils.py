@@ -149,8 +149,9 @@ def load_chars_file(chars_file, log=False):
         lines = f.readlines()
         _lines = []
         for i, line in enumerate(lines):
-            line_striped = line.strip()
+            line_striped = line.strip() #todo: check strip
             if len(line_striped) > 1:
+                print(len(line_striped), "line_striped--->'", line_striped ,"'")
                 raise PanicError(
                     f"Line {i} in {chars_file} is invalid, make sure one char one line"
                 )
@@ -161,7 +162,7 @@ def load_chars_file(chars_file, log=False):
 
                 if log:
                     logger.info(f"Find space in line {i} when load {chars_file}")
-                assumed_space = True
+                # assumed_space = True
                 _lines.append(SPACE_CHAR)
                 continue
 

@@ -94,7 +94,8 @@ class FixedTextColorCfg(TextColorCfg):
     # For generate effect/layout example
     def get_color(self, bg_img: PILImage) -> Tuple[int, int, int, int]:
         alpha = 255
-        text_color = (255, 50, 0, alpha)
+        # text_color = (255, 50, 0, alpha)
+        text_color = (0, 0, 0, alpha)
 
         return text_color
 

@@ -35,7 +35,7 @@ font_cfg = dict(
 
 perspective_transform = NormPerspectiveTransformCfg(20, 20, 1.5)
 
-
+# default:
 def get_char_corpus():
     return CharCorpus(
         CharCorpusCfg(
@@ -47,6 +47,52 @@ def get_char_corpus():
             char_spacing=(0, 0.4),
             **font_cfg
         ),
+    )
+
+# default:
+def get_en_char_corpus():
+    return RandCorpus(
+            RandCorpusCfg(chars_file=TEXT_DIR / "en_dict.txt", 
+            length=(5, 20),
+            char_spacing=(-0.3, 0.1),
+            **font_cfg),
+
+    # return CharCorpus(
+    #     CharCorpusCfg(
+    #         text_paths=[TEXT_DIR / "en_dict.txt"],
+    #         filter_by_chars=True,
+    #         chars_file=TEXT_DIR / "en_dict.txt",
+    #         length=(5, 20),
+    #         # char_spacing=(-0.3, 1.3),
+    #         char_spacing=(-0.3, 0.1),
+    #         **font_cfg
+    #     ),
+    )
+
+def eng_word_data():
+    return WordCorpus(
+        WordCorpusCfg(
+            text_paths=[TEXT_DIR / "en2.txt"],
+            separator=" ",
+            num_word = (2,5),
+            filter_by_chars=False,
+            text_color_cfg =FixedTextColorCfg(),
+            # chars_file=CHAR_DIR / "eng.txt",
+            **font_cfg
+        )
+    )
+
+# randomly get words from dict Line.
+def enum_data():
+    return EnumCorpus(
+            EnumCorpusCfg(
+                text_paths=[TEXT_DIR / "enum_en.txt"],
+                filter_by_chars=False,
+                num_pick = (2,5),
+                join_str =" ",
+                # chars_file=CHAR_DIR / "chn.txt",
+                **font_cfg
+            )
     )
 
 
@@ -91,6 +137,35 @@ def imgaug_emboss_example2():
         )
     )
 
+
+
+def aaa():
+    return base_cfg(
+        inspect.currentframe().f_code.co_name,
+        # corpus=get_en_char_corpus(),
+        corpus=enum_data(),
+        corpus_effects=Effects(
+            [
+                Padding(p=1, w_ratio=[0.2, 0.21], h_ratio=[0.7, 0.71], center=True),
+                # Emboss(p=0.9,alpha=(0.9, 1.0), strength=(1.5, 1.6)),
+                # CoarseDropout(p=1.0,noise=0.99, size_percent=1.0),
+                # JpegCompression(level=2)
+                # ImgAugEffect(aug=iaa.imgcorruptlike.JpegCompression(severity=1))
+                # SnowFlakes(),
+            ]
+        ), 
+        render_effects=Effects(
+            [
+                JpegCompression(level=2),
+                SnowFlakes()
+            ]
+        )
+    )
+
+
+
+
+
 # fmt: off
 # The configuration file must have a configs variable
 configs = [
@@ -99,8 +174,8 @@ configs = [
     # rand_data(),
     # eng_word_data(),
     # same_line_data(),
-    # extra_text_line_data(),hi
-    imgaug_emboss_example2()
+    # extra_text_line_data(),
+    aaa()
 ]
 # fmt: on
 
