@@ -30,7 +30,7 @@ TEXT_DIR = DATA_DIR / "text"
 font_cfg = dict(
     font_dir=FONT_DIR,
     font_list_file=FONT_LIST_DIR / "font_list.txt",
-    font_size=(30, 31),
+    font_size=(30, 33),
 )
 
 perspective_transform = NormPerspectiveTransformCfg(20, 20, 1.5)
@@ -49,26 +49,25 @@ def get_char_corpus():
         ),
     )
 
-# default:
+# Rand: ----> chars
 def get_en_char_corpus():
     return RandCorpus(
-            RandCorpusCfg(chars_file=TEXT_DIR / "en_dict.txt", 
+            RandCorpusCfg(chars_file=TEXT_DIR / "96_char_en_dict.txt", 
             length=(5, 20),
-            char_spacing=(-0.3, 0.1),
+#         filter_by_chars=True,
+#         chars_file=TEXT_DIR / "en_dict.txt",
+            char_spacing=(-0.05, 0.2),
+            text_color_cfg =FixedTextColorCfg(),
             **font_cfg),
 
     # return CharCorpus(
     #     CharCorpusCfg(
     #         text_paths=[TEXT_DIR / "en_dict.txt"],
-    #         filter_by_chars=True,
-    #         chars_file=TEXT_DIR / "en_dict.txt",
-    #         length=(5, 20),
-    #         # char_spacing=(-0.3, 1.3),
-    #         char_spacing=(-0.3, 0.1),
-    #         **font_cfg
+
     #     ),
     )
 
+# WordCorpus---> continous words.
 def eng_word_data():
     return WordCorpus(
         WordCorpusCfg(
@@ -115,6 +114,7 @@ def base_cfg(name: str, corpus, corpus_effects=None, layout_effects=None, layout
 
 
 
+
 def imgaug_emboss_example2():
     return base_cfg(
         inspect.currentframe().f_code.co_name,
@@ -137,18 +137,41 @@ def imgaug_emboss_example2():
         )
     )
 
+    # line_poses = [
+    #     "top",
+    #     "bottom",
+    #     "left",
+    #     "right",
+    #     "top_left",
+    #     "top_right",
+    #     "bottom_left",
+    #     "bottom_right",
+    #     "horizontal_middle",
+    #     "vertical_middle",
+    # ]
+
+    # line_pos_p=(0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1),
+    # line_pos_p (:obj:`tuple`) : Each value corresponds a line position. Must sum to 1.
+    #             top, bottom, left, right, top_left, top_right, bottom_left, bottom_right, horizontal_middle, vertical_middle
 
 
 def aaa():
     return base_cfg(
         inspect.currentframe().f_code.co_name,
-        # corpus=get_en_char_corpus(),
-        corpus=enum_data(),
+        corpus=get_en_char_corpus(),
+        # corpus=enum_data(),
+        layout=ExtraTextLineLayout(bottom_prob=1.0),
         corpus_effects=Effects(
             [
-                Padding(p=1, w_ratio=[0.2, 0.21], h_ratio=[0.7, 0.71], center=True),
+                Padding(p=1, w_ratio=[0.0, 0.21], h_ratio=[0.0, 0.21], center=False),
+                Line(p=0.5, thickness=(3, 4), line_pos_p=(0.5, 0.5, 0, 0, 0, 0, 0, 0, 0, 0)),
                 # Emboss(p=0.9,alpha=(0.9, 1.0), strength=(1.5, 1.6)),
-                # CoarseDropout(p=1.0,noise=0.99, size_percent=1.0),
+                # DropoutRand(p=1, dropout_p=(0.3, 0.5)),
+                DropoutHorizontal(p=1, num_line=2, thickness=3),
+                MotionBlur(p=1, k=(3, 3), angle=(0, 360), direction=(-1.0, 1.0)),
+                SaltAndPepper(p=1.0,noise=0.1),
+                Snow(p=0,level=1),
+                CoarseDropout(p=0.7,noise=0.03, size_percent=0.5),
                 # JpegCompression(level=2)
                 # ImgAugEffect(aug=iaa.imgcorruptlike.JpegCompression(severity=1))
                 # SnowFlakes(),
@@ -156,14 +179,11 @@ def aaa():
         ), 
         render_effects=Effects(
             [
-                JpegCompression(level=2),
-                SnowFlakes()
+                # JpegCompression(level=2),
+                SnowFlakes(p=0.1)
             ]
         )
     )
-
-
-
 
 
 # fmt: off

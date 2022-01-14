@@ -164,6 +164,18 @@ def load_chars_file(chars_file, log=False):
                     logger.info(f"Find space in line {i} when load {chars_file}")
                 # assumed_space = True
                 _lines.append(SPACE_CHAR)
+                _lines.append(SPACE_CHAR)
+                _lines.append(SPACE_CHAR)
+                _lines.append(SPACE_CHAR)
+                _lines.append(SPACE_CHAR)
+                _lines.append(SPACE_CHAR)
+                _lines.append(SPACE_CHAR)
+                _lines.append(SPACE_CHAR)
+                _lines.append(SPACE_CHAR)
+                _lines.append(SPACE_CHAR)
+                _lines.append(SPACE_CHAR)
+                _lines.append(SPACE_CHAR)
+                _lines.append(SPACE_CHAR)
                 continue
 
             _lines.append(line_striped)

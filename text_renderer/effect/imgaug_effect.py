@@ -68,18 +68,19 @@ class Emboss(ImgAugEffect):
 
 
 class MotionBlur(ImgAugEffect):
-    def __init__(self, p=1.0, k=(3, 7), angle=(0, 360), direction=(-1.0, 1.0)):
+    def __init__(self, p=1.0, k=(3, 3), angle=(0, 360), direction=(-1.0, 1.0)):
         """
 
         Parameters
         ----------
         p
-        k:
-            see imgaug `doc`_
+        k: 
+            Kernel size to use.
         angle
-            see imgaug `doc`_
+            Angle of the motion blur in degrees (clockwise, relative to top center direction).
         direction
-            see imgaug `doc`_
+            Forward/backward direction of the motion blur. Lower values towards -1.0 will point the motion blur towards the back (with angle provided via angle). 
+            Higher values towards 1.0 will point the motion blur forward. A value of 0.0 leads to a uniformly (but still angled) motion blur.
 
 
         .. _doc: https://imgaug.readthedocs.io/en/latest/source/api_augmenters_blur.html#imgaug.augmenters.blur.MotionBlur
