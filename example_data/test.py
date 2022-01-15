@@ -49,23 +49,7 @@ def get_char_corpus():
         ),
     )
 
-# 1. Rand: ----> chars
-def get_en_char_corpus():
-    return RandCorpus(
-            RandCorpusCfg(chars_file=TEXT_DIR / "96_char_en_dict.txt", 
-            length=(5, 15),
-#         filter_by_chars=True,
-#         chars_file=TEXT_DIR / "en_dict.txt",
-            char_spacing=(-0.05, 0.2),
-            text_color_cfg =FixedTextColorCfg(),
-            **font_cfg),
 
-    # return CharCorpus(
-    #     CharCorpusCfg(
-    #         text_paths=[TEXT_DIR / "en_dict.txt"],
-
-    #     ),
-    )
 
 # WordCorpus---> continous words.
 def eng_word_data():
@@ -95,25 +79,10 @@ def eng_word_data():
 
 
 
-# randomly get words from dict Line.
-def bk_enum_data():
-    return EnumCorpus(
-            EnumCorpusCfg(
-                text_paths=[TEXT_DIR / "AOF.txt"],
-                filter_by_chars=False,
-                num_pick = (1,5),
-                join_str =" ",
-                char_spacing=(-0.05, 0.2),
-                text_color_cfg =FixedTextColorCfg(),
-                # chars_file=CHAR_DIR / "chn.txt",
-                **font_cfg
-            )
-    )
 
-
-def base_cfg(name: str, corpus, corpus_effects=None, layout_effects=None, layout=None, gray=True, render_effects=None):
+def base_cfg(name: str, corpus, corpus_effects=None, layout_effects=None, layout=None, gray=True, render_effects=None, num=50):
     return GeneratorCfg(
-        num_image=50,
+        num_image=num,
         save_dir=OUT_DIR / name,
         render_cfg=RenderCfg(
             bg_dir=BG_DIR,
@@ -127,6 +96,202 @@ def base_cfg(name: str, corpus, corpus_effects=None, layout_effects=None, layout
             height = 32
         ),
     )
+
+
+
+
+#========================== Corpus ==========================
+# 1. Rand: ----> chars
+def get_en_char_corpus():
+    return RandCorpus(
+            RandCorpusCfg(
+            chars_file=TEXT_DIR / "96_char_en_dict.txt", 
+            length=(5, 15),
+#         filter_by_chars=True,
+#         chars_file=TEXT_DIR / "en_dict.txt",
+            char_spacing=(-0.05, 0.2),
+            text_color_cfg =FixedTextColorCfg(),
+            **font_cfg),
+    )
+# 2.randomly get words from dict Line.
+def bk_enum_corpus():
+    return EnumCorpus(
+            EnumCorpusCfg(
+                text_paths=[TEXT_DIR / "AOF.txt",TEXT_DIR / "SAO_EN.txt"],
+                num_pick = (1,5),
+                join_str =" ",
+                char_spacing=(-0.05, 0.2),
+                text_color_cfg =FixedTextColorCfg(),
+                filter_by_chars=True,
+                chars_file=TEXT_DIR / "96_char_en_dict.txt", 
+                **font_cfg
+            )
+    )
+# 3.[WIDE] randomly get words from dict Line.
+def bk_enum_wide_corpus():
+    return EnumCorpus(
+            EnumCorpusCfg(
+                text_paths=[TEXT_DIR / "80768_americanbanker.txt",TEXT_DIR / "4853_reversedictionary.txt"],
+                num_pick = (1,5),
+                join_str =" ",
+                char_spacing=(-0.05, 0.2),
+                text_color_cfg =FixedTextColorCfg(),
+                filter_by_chars=True,
+                chars_file=TEXT_DIR / "96_char_en_dict.txt", 
+                **font_cfg
+            )
+    )
+
+#========================== Config ==========================
+# 1. Rand: ----> chars
+def random_chars_2000000():
+    return base_cfg(
+        inspect.currentframe().f_code.co_name,
+        num=200000,
+        corpus=get_en_char_corpus(),
+        # corpus=enum_data(),
+        layout=ExtraTextLineLayout(bottom_prob=1.0),
+        corpus_effects=Effects(
+            [
+                Padding(p=1, w_ratio=[0.0, 0.21], h_ratio=[0.0, 0.21], center=False),
+                Line(p=0.2, thickness=(1, 3), line_pos_p=(0.5, 0.5, 0, 0, 0, 0, 0, 0, 0, 0)),
+                # Emboss(p=0.9,alpha=(0.9, 1.0), strength=(1.5, 1.6)),
+                # DropoutRand(p=1, dropout_p=(0.3, 0.5)),
+                DropoutHorizontal(p=0.5, num_line=2, thickness=1),
+                MotionBlur(p=0.1, k=(3, 3), angle=(0, 360), direction=(-1.0, 1.0)),
+                
+                Snow(p=0,level=1),
+                CoarseDropout(p=0.7,noise=0.03, size_percent=0.5),
+                # JpegCompression(level=2)
+                # ImgAugEffect(aug=iaa.imgcorruptlike.JpegCompression(severity=1))
+                # SnowFlakes(),
+            ]
+        ), 
+        render_effects=Effects(
+            [
+                SaltAndPepper(p=0.3,noise=0.003),
+                SnowFlakes(p=0.2),
+                JpegCompression(level=2)
+            ]
+        )
+    )
+
+
+
+# 2.randomly get words from dict Line.
+
+def bank_chars_aof_1000000():
+    return base_cfg(
+        inspect.currentframe().f_code.co_name,
+        num=1000000,
+        corpus=bk_enum_corpus(),
+        # corpus=enum_data(),
+        layout=ExtraTextLineLayout(bottom_prob=1.0),
+        corpus_effects=Effects(
+            [
+                Padding(p=1, w_ratio=[0.0, 0.21], h_ratio=[0.0, 0.21], center=False),
+                Line(p=0.2, thickness=(1, 3), line_pos_p=(0.5, 0.5, 0, 0, 0, 0, 0, 0, 0, 0)),
+                # Emboss(p=0.9,alpha=(0.9, 1.0), strength=(1.5, 1.6)),
+                # DropoutRand(p=1, dropout_p=(0.3, 0.5)),
+                DropoutHorizontal(p=0.5, num_line=2, thickness=1),
+                MotionBlur(p=0.1, k=(3, 3), angle=(0, 360), direction=(-1.0, 1.0)),
+                
+                Snow(p=0,level=1),
+                CoarseDropout(p=0.7,noise=0.03, size_percent=0.5),
+                # JpegCompression(level=2)
+                # ImgAugEffect(aug=iaa.imgcorruptlike.JpegCompression(severity=1))
+                # SnowFlakes(),
+            ]
+        ), 
+        render_effects=Effects(
+            [
+                SaltAndPepper(p=0.3,noise=0.003),
+                SnowFlakes(p=0.2),
+                JpegCompression(level=2)
+            ]
+        )
+    )
+
+#3.
+def bank_chars_wide_1000000():
+    return base_cfg(
+        inspect.currentframe().f_code.co_name,
+        num=1000000,
+        corpus=bk_enum_wide_corpus(),
+        # corpus=enum_data(),
+        layout=ExtraTextLineLayout(bottom_prob=1.0),
+        corpus_effects=Effects(
+            [
+                Padding(p=1, w_ratio=[0.0, 0.21], h_ratio=[0.0, 0.21], center=False),
+                Line(p=0.2, thickness=(1, 3), line_pos_p=(0.5, 0.5, 0, 0, 0, 0, 0, 0, 0, 0)),
+                # Emboss(p=0.9,alpha=(0.9, 1.0), strength=(1.5, 1.6)),
+                # DropoutRand(p=1, dropout_p=(0.3, 0.5)),
+                DropoutHorizontal(p=0.3, num_line=2, thickness=1),
+                DropoutVertical(p=0.2, num_line=3, thickness=1),
+                MotionBlur(p=0.1, k=(3, 3), angle=(0, 360), direction=(-1.0, 1.0)),
+                
+                Snow(p=0,level=1),
+                CoarseDropout(p=0.7,noise=0.03, size_percent=0.5),
+                # JpegCompression(level=2)
+                # ImgAugEffect(aug=iaa.imgcorruptlike.JpegCompression(severity=1))
+                # SnowFlakes(),
+            ]
+        ), 
+        render_effects=Effects(
+            [
+                SaltAndPepper(p=0.3,noise=0.003),
+                SnowFlakes(p=0.2),
+                JpegCompression(level=2)
+            ]
+        )
+    )
+
+
+# fmt: off
+# The configuration file must have a configs variable
+configs = [
+    # chn_data(),
+    # enum_data(),
+    # rand_data(),
+    # eng_word_data(),
+    # same_line_data(),
+    # extra_text_line_data(),
+
+    # random_chars_2000000(),
+    bank_chars_aof_1000000(),
+    bank_chars_wide_1000000()
+]
+# fmt: on
+
+
+# python3 main.py --config example_data/text.py --dataset img --num_processes 2 --log_period 10
+
+
+
+
+
+
+#todo:
+
+
+#doing
+
+
+#done:
+#1. emboss
+#2. snow
+# 1. visualize
+# 2. lbl converter
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -165,104 +330,3 @@ def imgaug_emboss_example2():
     # line_pos_p=(0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1),
     # line_pos_p (:obj:`tuple`) : Each value corresponds a line position. Must sum to 1.
     #             top, bottom, left, right, top_left, top_right, bottom_left, bottom_right, horizontal_middle, vertical_middle
-
-
-def random_chars():
-    return base_cfg(
-        inspect.currentframe().f_code.co_name,
-        corpus=get_en_char_corpus(),
-        # corpus=enum_data(),
-        layout=ExtraTextLineLayout(bottom_prob=1.0),
-        corpus_effects=Effects(
-            [
-                Padding(p=1, w_ratio=[0.0, 0.21], h_ratio=[0.0, 0.21], center=False),
-                Line(p=0.2, thickness=(1, 3), line_pos_p=(0.5, 0.5, 0, 0, 0, 0, 0, 0, 0, 0)),
-                # Emboss(p=0.9,alpha=(0.9, 1.0), strength=(1.5, 1.6)),
-                # DropoutRand(p=1, dropout_p=(0.3, 0.5)),
-                DropoutHorizontal(p=0.5, num_line=2, thickness=1),
-                MotionBlur(p=0.1, k=(3, 3), angle=(0, 360), direction=(-1.0, 1.0)),
-                
-                Snow(p=0,level=1),
-                CoarseDropout(p=0.7,noise=0.03, size_percent=0.5),
-                # JpegCompression(level=2)
-                # ImgAugEffect(aug=iaa.imgcorruptlike.JpegCompression(severity=1))
-                # SnowFlakes(),
-            ]
-        ), 
-        render_effects=Effects(
-            [
-                SaltAndPepper(p=0.3,noise=0.003),
-                SnowFlakes(p=0.2),
-                JpegCompression(level=2)
-            ]
-        )
-    )
-
-
-
-def bank_chars_1():
-    return base_cfg(
-        inspect.currentframe().f_code.co_name,
-        corpus=bk_enum_data(),
-        # corpus=enum_data(),
-        layout=ExtraTextLineLayout(bottom_prob=1.0),
-        corpus_effects=Effects(
-            [
-                Padding(p=1, w_ratio=[0.0, 0.21], h_ratio=[0.0, 0.21], center=False),
-                Line(p=0.2, thickness=(1, 3), line_pos_p=(0.5, 0.5, 0, 0, 0, 0, 0, 0, 0, 0)),
-                # Emboss(p=0.9,alpha=(0.9, 1.0), strength=(1.5, 1.6)),
-                # DropoutRand(p=1, dropout_p=(0.3, 0.5)),
-                DropoutHorizontal(p=0.5, num_line=2, thickness=1),
-                MotionBlur(p=0.1, k=(3, 3), angle=(0, 360), direction=(-1.0, 1.0)),
-                
-                Snow(p=0,level=1),
-                CoarseDropout(p=0.7,noise=0.03, size_percent=0.5),
-                # JpegCompression(level=2)
-                # ImgAugEffect(aug=iaa.imgcorruptlike.JpegCompression(severity=1))
-                # SnowFlakes(),
-            ]
-        ), 
-        render_effects=Effects(
-            [
-                SaltAndPepper(p=0.3,noise=0.003),
-                SnowFlakes(p=0.2),
-                JpegCompression(level=2)
-            ]
-        )
-    )
-
-
-# fmt: off
-# The configuration file must have a configs variable
-configs = [
-    # chn_data(),
-    # enum_data(),
-    # rand_data(),
-    # eng_word_data(),
-    # same_line_data(),
-    # extra_text_line_data(),
-    # random_chars(),
-    bank_chars_1()
-]
-# fmt: on
-
-
-# python3 main.py --config example_data/text.py --dataset img --num_processes 2 --log_period 10
-
-
-
-
-
-
-#todo:
-
-
-#doing
-
-
-#done:
-#1. emboss
-#2. snow
-# 1. visualize
-# 2. lbl converter
-

@@ -18,7 +18,7 @@ def parse_args():
     parser.add_argument("--look",default="/home/jim/AI/text_renderer/example_data/output/")
     return parser.parse_args()
 
-    
+
 if __name__=="__main__":
     args = parse_args()
     look_folder = args.look
@@ -36,7 +36,7 @@ if __name__=="__main__":
                 with open(json_path, 'r') as f:
                     data = json.load(f)
 
-                with open(txt_path, 'w') as f:
+                with open(txt_path, 'a') as f:
                     for k in data["labels"]:
                         # print(k)
                         # print(data["labels"][k])

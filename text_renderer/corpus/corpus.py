@@ -79,13 +79,15 @@ class Corpus:
         """
         try:
             text = self.get_text()
+            if text=='':
+                print("gotit")
+                pass
         except Exception as e:
             logger.exception(e)
             raise RetryError()
 
         if self.cfg.clip_length != -1 and len(text) > self.cfg.clip_length:
             text = text[: self.cfg.clip_length]
-
         font, support_chars, font_path = self.font_manager.get_font()
         status, intersect = self.font_manager.check_support(text, support_chars)
         if not status:

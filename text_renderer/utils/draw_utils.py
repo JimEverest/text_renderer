@@ -58,12 +58,18 @@ def draw_text_on_bg(
         widths.append(size[0])
         heights.append(size[1])
 
-    if font_text.horizontal:
-        width = sum(widths)
-        height = max(heights)
-    else:
-        width = max(widths)
-        height = sum(heights)
+    width = 100
+    height = 32
+    try:
+        if font_text.horizontal:
+            width = sum(widths)
+            height = max(heights)
+        else:
+            width = max(widths)
+            height = sum(heights)
+    except Exception as e:
+        pass
+        print("eeeeeeeeeeeee->",e)
 
     char_spacings = []
 
