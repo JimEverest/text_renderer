@@ -18,7 +18,7 @@ if __name__=="__main__":
     args = parse_args()
     # args.output=args.output
     #1. CLEAN OUTPUT
-    os.system("rm -r "+ args.output+"*")
+    # os.system("rm -r "+ args.output+"*")
 
     #2. Generate
     os.system("python /home/jim/AI/text_renderer/main.py --config "+args.config+" --dataset img --num_processes 6 --log_period 10")

@@ -85,7 +85,6 @@ class EnumCorpus(Corpus):
             else:
                 res = self.cfg.join_str.join(text)
             # res = self.cfg.join_str.join(text)
-            if(res == ''):
-                print("gotit")
-                pass
+            if(res.strip() == ''):
+                continue
         return res
