@@ -7,7 +7,7 @@ from text_renderer.utils.errors import PanicError
 from text_renderer.utils.utils import load_chars_file, random_choice
 
 from .corpus import Corpus, CorpusCfg
-
+import re
 
 @dataclass
 class RandCorpusCfg(CorpusCfg):
@@ -50,5 +50,8 @@ class RandCorpus(Corpus):
     def get_text(self):
         length = np.random.randint(*self.cfg.length)
         chars = random_choice(self.chars, length)
-        text = "".join(chars)
+        # 1. remove multiple spaces
+        chars=re.sub(' +', ' ', "".join(chars))
+        # 2. stripe spaces
+        text = chars.strip()
         return text

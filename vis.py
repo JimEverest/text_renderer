@@ -1,3 +1,5 @@
+import argparse
+from glob import glob
 from pathlib import Path
 import cv2
 import numpy
@@ -5,6 +7,7 @@ import matplotlib.pyplot as plt
 import os
 import random
 import json
+import argparse
 
 font = cv2.FONT_HERSHEY_SIMPLEX
 img_path="example_data/output/aaa/images/"
@@ -50,15 +53,19 @@ def ploy(img, js,idx=0):
 def get_lbl_ImgName(img_name):
     # Path(img_name).parent()
     root_path=str(Path(img_path).parent)
+    # root_path=img_path
     json_path = os.path.join(root_path,"labels.json")
     with open(json_path, 'r') as f:
         data = json.load(f)
         img_id = img_name.split(".")[0]
-        # print(data["labels"][img_id])
+        # print(data["labels"][img_id]
+        
         return data["labels"][img_id]
 
 
-def random_sample_folder(lbl=img_path,r=4,c=6,addLbl=False):
+def random_sample_folder(lbl,r=4,c=6,addLbl=False):
+    global img_path
+    img_path = lbl
     samples=r*c
     filenames= os.listdir(lbl)
     random.shuffle(filenames)
@@ -69,7 +76,7 @@ def random_sample_folder(lbl=img_path,r=4,c=6,addLbl=False):
     for item in list_for_centers:
         # target=lbl+item
         txt=get_lbl_ImgName(item)
-        print("lbl--->", txt)
+        # print("lbl--->", txt)
         lbls.append(txt)
         targets.append(item)
         img = loadImg(item,base=lbl)
@@ -77,23 +84,23 @@ def random_sample_folder(lbl=img_path,r=4,c=6,addLbl=False):
     return imgs,lbls
 
 
-def random_sample(lbl="/content/PaddleOCR/train_data/icdar2015/text_localization/train_icdar2015_label.txt",r=4,c=6,img_base="/content/PaddleOCR/train_data/icdar2015/text_localization/",addLbl=False):
-  samples=r*c
-  linC=getLineNum(lbl)
-  # print(linC)
-  rl = list(range(0,linC))
-  rrl = (random.sample(rl, samples))
-  imgs=[]
-  for i in rrl:
-    xxx,js = readLabel(fp=lbl,id=i)
-    # print(i,js)
-    img = loadImg(xxx,base=img_base)
-    if(addLbl):
-      img = ploy(img,js)
-    imgs.append(img)
-  return imgs
+# def random_sample(lbl="/content/PaddleOCR/train_data/icdar2015/text_localization/train_icdar2015_label.txt",r=4,c=6,img_base="/content/PaddleOCR/train_data/icdar2015/text_localization/",addLbl=False):
+#   samples=r*c
+#   linC=getLineNum(lbl)
+#   # print(linC)
+#   rl = list(range(0,linC))
+#   rrl = (random.sample(rl, samples))
+#   imgs=[]
+#   for i in rrl:
+#     xxx,js = readLabel(fp=lbl,id=i)
+#     # print(i,js)
+#     img = loadImg(xxx,base=img_base)
+#     if(addLbl):
+#       img = ploy(img,js)
+#     imgs.append(img)
+#   return imgs
 
-def showImgs(imgs,lbls=None, rows=6,cols=4):
+def showImgs(imgs,lbls=None, rows=6,cols=4, savefile_name = "zamples"):
     figure = plt.figure(figsize = (cols*3,rows*1))
     for i in range(1,cols*rows+1):
         # img_pth = random.choice(os.listdir(folder))
@@ -105,17 +112,25 @@ def showImgs(imgs,lbls=None, rows=6,cols=4):
         plt.axis("off")
         plt.imshow(cv2.cvtColor(imgs[i-1], cv2.COLOR_BGR2RGB))
         # print(label)
-    plt.savefig("zamples.png", dpi=100)
-    os.system("code zamples.png")
+    plt.savefig(savefile_name+".png", dpi=100)
+    os.system("code "+savefile_name+".png")
     # plt.show()
 
-
-
+def parse_arg():
+  parser = argparse.ArgumentParser()
+  parser.add_argument("--look",default="example_data/output/bank_chars_1")
+  return parser.parse_args()
 
 
 # xxx,js = readLabel(id=0)
 # img = loadImg(xxx)
 # ploy(img,js)
-imgs,lbls = random_sample_folder()
 
-showImgs(imgs,lbls)
+
+
+if __name__=="__main__":
+  args = parse_arg()
+  imgs,lbls = random_sample_folder(lbl=args.look)
+  # imgs,lbls = random_sample_folder(lbl="example_data/output/bank_chars_1/images")
+  fn=args.look.split("/")[-2]
+  showImgs(imgs,lbls,savefile_name=fn)

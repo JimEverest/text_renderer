@@ -148,40 +148,57 @@ def load_chars_file(chars_file, log=False):
     with open(str(chars_file), "r", encoding="utf-8") as f:
         lines = f.readlines()
         _lines = []
+        #region  x
+        # for i, line in enumerate(lines):
+        #     line_striped = line.strip() #todo: check strip
+        #     if len(line_striped) > 1:
+        #         print(len(line_striped), "line_striped--->'", line_striped ,"'")
+        #         raise PanicError(
+        #             f"Line {i} in {chars_file} is invalid, make sure one char one line"
+        #         )
+
+        #     if len(line_striped) == 0 and SPACE_CHAR in line:
+        #         if assumed_space is True:
+        #             raise PanicError(f"Find two space in {chars_file}")
+
+        #         if log:
+        #             logger.info(f"Find space in line {i} when load {chars_file}")
+        #         # assumed_space = True
+        #         _lines.append(SPACE_CHAR)
+        #         _lines.append(SPACE_CHAR)
+        #         _lines.append(SPACE_CHAR)
+        #         _lines.append(SPACE_CHAR)
+        #         _lines.append(SPACE_CHAR)
+        #         _lines.append(SPACE_CHAR)
+        #         _lines.append(SPACE_CHAR)
+        #         _lines.append(SPACE_CHAR)
+        #         _lines.append(SPACE_CHAR)
+        #         _lines.append(SPACE_CHAR)
+        #         _lines.append(SPACE_CHAR)
+        #         _lines.append(SPACE_CHAR)
+        #         _lines.append(SPACE_CHAR)
+        #         continue
+
+        #     _lines.append(line_striped)
+        # lines = _lines
+        # chars = set("".join(lines))
+        #endregion
+
         for i, line in enumerate(lines):
-            line_striped = line.strip() #todo: check strip
-            if len(line_striped) > 1:
-                print(len(line_striped), "line_striped--->'", line_striped ,"'")
-                raise PanicError(
-                    f"Line {i} in {chars_file} is invalid, make sure one char one line"
-                )
-
-            if len(line_striped) == 0 and SPACE_CHAR in line:
-                if assumed_space is True:
-                    raise PanicError(f"Find two space in {chars_file}")
-
-                if log:
-                    logger.info(f"Find space in line {i} when load {chars_file}")
-                # assumed_space = True
-                _lines.append(SPACE_CHAR)
-                _lines.append(SPACE_CHAR)
-                _lines.append(SPACE_CHAR)
-                _lines.append(SPACE_CHAR)
-                _lines.append(SPACE_CHAR)
-                _lines.append(SPACE_CHAR)
-                _lines.append(SPACE_CHAR)
-                _lines.append(SPACE_CHAR)
-                _lines.append(SPACE_CHAR)
-                _lines.append(SPACE_CHAR)
-                _lines.append(SPACE_CHAR)
-                _lines.append(SPACE_CHAR)
-                _lines.append(SPACE_CHAR)
-                continue
-
-            _lines.append(line_striped)
-
-        lines = _lines
-        chars = set("".join(lines))
+            # line_striped = line.strip() #todo: check strip
+            line=line.replace('\n',"")
+            char=''
+            freq=0
+            if len(line) > 1:
+                char,freq = line.split("_")
+                freq = int(freq)
+            if len(line) == 1:
+                char=line
+                freq=10
+            for i in range(freq):
+                _lines.append(char)
+        chars = _lines
+        # chars = set("".join(lines))
     if log:
         logger.info(f"load {len(chars)} chars from: {chars_file}")
     return chars

@@ -96,7 +96,12 @@ class FontManager:
             removed_chars = []
             font = self._get_font(font_path, 10)
             chars = self.font_support_chars_cache[font_path].copy()
-            for c in chars & charset:
+            compatable_list=set()
+            try:
+                compatable_list = chars & charset
+            except:
+                compatable_list = chars & set(charset)
+            for c in compatable_list:
                 bbox = font.getmask(c).getbbox()
                 if (
                     c not in white_list

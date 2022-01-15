@@ -31,13 +31,26 @@ class ImgAugEffect(Effect):
         auged=None
         try:
             auged = self.aug.augment_image(word_img)
-        except:
-            img_rgb = word_img[:,:,0:3]
-            img_alpha = word_img[:,:,3]
-            auged = self.aug.augment_image(img_rgb)
+        except Exception as e:
+            # Resize to 32:
+            if('at least 32 pixels' in str(e)):
+                expand_ratio = 32 / word_img.shape[0]
+                new_w = int(word_img.shape[1] * expand_ratio)
+                new_h = 32
+                word_img = np.array(img.resize((new_w, new_h), Image.ANTIALIAS))
+                # auged = self.aug.augment_image(word_img)
 
-            auged_rgba = np.dstack((auged,img_alpha))
-            auged = auged_rgba
+            # if(('Expected input image to have shape (height, width) or (height, width, 1) or (height, width, 3)') in str(e)):
+            try:
+                img_rgb = word_img[:,:,0:3]
+                img_alpha = word_img[:,:,3]
+                auged = self.aug.augment_image(img_rgb)
+                auged_rgba = np.dstack((auged,img_alpha))
+                auged = auged_rgba
+            except:
+                auged = word_img
+
+
 
         return Image.fromarray(auged), text_bbox
 
