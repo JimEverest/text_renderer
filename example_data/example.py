@@ -32,7 +32,7 @@ font_cfg = dict(
 
 perspective_transform = NormPerspectiveTransformCfg(20, 20, 1.5)
 
-
+#CharCorpus
 def get_char_corpus():
     return CharCorpus(
         CharCorpusCfg(

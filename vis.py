@@ -1,10 +1,14 @@
+from pathlib import Path
 import cv2
 import numpy
 import matplotlib.pyplot as plt
 import os
 import random
+import json
 
 font = cv2.FONT_HERSHEY_SIMPLEX
+img_path="example_data/output/aaa/images/"
+
 
 def readLabel(fp="PaddleOCR/rec_data_lesson_demo/train.txt",id=0):
   fp = open(fp)
@@ -43,25 +47,40 @@ def ploy(img, js,idx=0):
   cv2.imwrite('../temp/temp'+str(idx)+'.jpg', img)
   return img
 
-def random_sample_folder(lbl="example_data/output/aaa/images/",r=4,c=6,addLbl=False):
+def get_lbl_ImgName(img_name):
+    # Path(img_name).parent()
+    root_path=str(Path(img_path).parent)
+    json_path = os.path.join(root_path,"labels.json")
+    with open(json_path, 'r') as f:
+        data = json.load(f)
+        img_id = img_name.split(".")[0]
+        # print(data["labels"][img_id])
+        return data["labels"][img_id]
+
+
+def random_sample_folder(lbl=img_path,r=4,c=6,addLbl=False):
     samples=r*c
     filenames= os.listdir(lbl)
     random.shuffle(filenames)
     list_for_centers=filenames[:samples]
     targets=[]
     imgs=[]
+    lbls=[]
     for item in list_for_centers:
         # target=lbl+item
+        txt=get_lbl_ImgName(item)
+        print("lbl--->", txt)
+        lbls.append(txt)
         targets.append(item)
         img = loadImg(item,base=lbl)
         imgs.append(img)
-    return imgs
+    return imgs,lbls
 
 
 def random_sample(lbl="/content/PaddleOCR/train_data/icdar2015/text_localization/train_icdar2015_label.txt",r=4,c=6,img_base="/content/PaddleOCR/train_data/icdar2015/text_localization/",addLbl=False):
   samples=r*c
   linC=getLineNum(lbl)
-  print(linC)
+  # print(linC)
   rl = list(range(0,linC))
   rrl = (random.sample(rl, samples))
   imgs=[]
@@ -74,9 +93,7 @@ def random_sample(lbl="/content/PaddleOCR/train_data/icdar2015/text_localization
     imgs.append(img)
   return imgs
 
-
-
-def showImgs(imgs,rows=6,cols=4):
+def showImgs(imgs,lbls=None, rows=6,cols=4):
     figure = plt.figure(figsize = (cols*3,rows*1))
     for i in range(1,cols*rows+1):
         # img_pth = random.choice(os.listdir(folder))
@@ -84,12 +101,13 @@ def showImgs(imgs,rows=6,cols=4):
         # img = cv2.imread(os.path.join(folder,img_pth),0)
         
         figure.add_subplot(rows,cols,i)
-        # plt.title(label)
+        plt.title(lbls[i-1])
         plt.axis("off")
         plt.imshow(cv2.cvtColor(imgs[i-1], cv2.COLOR_BGR2RGB))
         # print(label)
     plt.savefig("zamples.png", dpi=100)
-    plt.show()
+    os.system("code zamples.png")
+    # plt.show()
 
 
 
@@ -98,8 +116,6 @@ def showImgs(imgs,rows=6,cols=4):
 # xxx,js = readLabel(id=0)
 # img = loadImg(xxx)
 # ploy(img,js)
-imgs = random_sample_folder()
+imgs,lbls = random_sample_folder()
 
-showImgs(imgs)
-
-
+showImgs(imgs,lbls)
