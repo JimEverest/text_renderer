@@ -40,7 +40,7 @@ if __name__=="__main__":
                     for k in data["labels"]:
                         # print(k)
                         # print(data["labels"][k])
-                        _s = dir + "\\" +k + ".jpg	" + data["labels"][k]+"\n"
+                        _s = dir + "/images/" +k + ".jpg	" + data["labels"][k]+"\n"
                         f.writelines(_s) 
                         num_lines+=1
                 print(str(num_lines)," lines written to --->",txt_path )

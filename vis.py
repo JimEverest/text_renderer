@@ -70,15 +70,17 @@ def random_sample_folder(lbl,r=4,c=6,addLbl=False):
     filenames= os.listdir(lbl)
     random.shuffle(filenames)
     list_for_centers=filenames[:samples]
+    print(list_for_centers)
     targets=[]
     imgs=[]
     lbls=[]
     for item in list_for_centers:
         # target=lbl+item
-        txt=get_lbl_ImgName(item)
-        # print("lbl--->", txt)
-        lbls.append(txt)
-        targets.append(item)
+        if addLbl:
+          txt=get_lbl_ImgName(item)
+          # print("lbl--->", txt)
+          lbls.append(txt)
+          targets.append(item)
         img = loadImg(item,base=lbl)
         imgs.append(img)
     return imgs,lbls
@@ -108,7 +110,10 @@ def showImgs(imgs,lbls=None, rows=6,cols=4, savefile_name = "zamples"):
         # img = cv2.imread(os.path.join(folder,img_pth),0)
         
         figure.add_subplot(rows,cols,i)
-        plt.title(lbls[i-1])
+        try:
+          plt.title(lbls[i-1])
+        except:
+          pass
         plt.axis("off")
         plt.imshow(cv2.cvtColor(imgs[i-1], cv2.COLOR_BGR2RGB))
         # print(label)
@@ -129,8 +134,25 @@ def parse_arg():
 
 
 if __name__=="__main__":
+  # --look example_data/output/chars_2000/images
   args = parse_arg()
   imgs,lbls = random_sample_folder(lbl=args.look)
   # imgs,lbls = random_sample_folder(lbl="example_data/output/bank_chars_1/images")
   fn=args.look.split("/")[-2]
   showImgs(imgs,lbls,savefile_name=fn)
+
+
+
+# =============== Hard coded Folder
+# "/mnt/e/ai_data/Chinese_dataset/images"
+# "/mnt/e/ai_data/Synthetic Chinese String Dataset/images"
+
+# if __name__=="__main__":
+#   img_folder = "/mnt/e/ai_data/Synthetic Chinese String Dataset/images"
+#   imgs,lbls = random_sample_folder(lbl=img_folder)
+#   # imgs,lbls = random_sample_folder(lbl="example_data/output/bank_chars_1/images")
+#   fn=img_folder.split("/")[-2]
+#   showImgs(imgs,lbls,savefile_name=fn)
+
+
+

@@ -27,6 +27,7 @@ class Effect:
 
         """
         self.p = p
+        self.error_num=0
 
     def __call__(self, img, text_bbox):
         if prob(self.p):
@@ -81,6 +82,7 @@ class Effect:
     def fix_pick(pim, col, row, value_range: Tuple[int, int]):
         value = random.randint(*value_range)
         pim[col, row] = (value, value, value, value)
+        # pim.putpixel((col, row), 250)
 
 
 class NoEffects:

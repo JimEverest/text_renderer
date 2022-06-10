@@ -16,3 +16,9 @@ notebook
 text_renderer.egg-info/
 workspace
 workspace2
+example_data/text/AOF.txt
+example_data/text/SAO_EN.txt
+example_data/labels_bkAO_1000000.txt
+example_data/labels*
+example_data/labels*.txt
+example_data/lbl*.txt

@@ -23,7 +23,7 @@ OUT_DIR = CURRENT_DIR / "output"
 DATA_DIR = CURRENT_DIR
 BG_DIR = DATA_DIR / "bg"
 CHAR_DIR = DATA_DIR / "char"
-FONT_DIR = DATA_DIR / "font"
+FONT_DIR = DATA_DIR / "font_cn"
 FONT_LIST_DIR = DATA_DIR / "font_list"
 TEXT_DIR = DATA_DIR / "text"
 
@@ -113,6 +113,20 @@ def get_en_char_corpus():
             text_color_cfg =FixedTextColorCfg(),
             **font_cfg),
     )
+
+# 1.1 Rand: ----> chars  [CN]
+def get_cn_char_corpus():
+    return RandCorpus(
+            RandCorpusCfg(
+            chars_file=TEXT_DIR / "96_rare_cnhk.txt", #"ppocr_keys_v1.txt", 
+            length=(1, 10),
+#         filter_by_chars=True,
+            char_spacing=(-0.05, 0.2),
+            text_color_cfg =FixedTextColorCfg(),
+            **font_cfg),
+    )
+
+
 # 2.randomly get words from dict Line.
 def bk_enum_corpus():
     return EnumCorpus(
@@ -127,6 +141,7 @@ def bk_enum_corpus():
                 **font_cfg
             )
     )
+
 # 3.[WIDE] randomly get words from dict Line.
 def bk_enum_wide_corpus():
     return EnumCorpus(
@@ -144,10 +159,10 @@ def bk_enum_wide_corpus():
 
 #========================== Config ==========================
 # 1. Rand: ----> chars
-def random_chars_2000000():
+def random_chars_500000():
     return base_cfg(
         inspect.currentframe().f_code.co_name,
-        num=200000,
+        num=500000,
         corpus=get_en_char_corpus(),
         # corpus=enum_data(),
         layout=ExtraTextLineLayout(bottom_prob=1.0),
@@ -176,6 +191,39 @@ def random_chars_2000000():
         )
     )
 
+
+# 1.1 Rand: ----> chars 【CN】
+def random_chars_1000000_CN():
+    return base_cfg(
+        inspect.currentframe().f_code.co_name,
+        num=1000000,
+        corpus=get_cn_char_corpus(),
+        # corpus=enum_data(),
+        layout=ExtraTextLineLayout(bottom_prob=1.0),
+        corpus_effects=Effects(
+            [
+                Padding(p=1, w_ratio=[0.0, 0.21], h_ratio=[0.0, 0.21], center=False),
+                Line(p=0.2, thickness=(1, 3), line_pos_p=(0.5, 0.5, 0, 0, 0, 0, 0, 0, 0, 0)),
+                # Emboss(p=0.9,alpha=(0.9, 1.0), strength=(1.5, 1.6)),
+                # DropoutRand(p=1, dropout_p=(0.3, 0.5)),
+                DropoutHorizontal(p=0.5, num_line=2, thickness=1),
+                MotionBlur(p=0.1, k=(3, 3), angle=(0, 360), direction=(-1.0, 1.0)),
+                
+                Snow(p=0,level=1),
+                CoarseDropout(p=0.7,noise=0.03, size_percent=0.5),
+                # JpegCompression(level=2)
+                # ImgAugEffect(aug=iaa.imgcorruptlike.JpegCompression(severity=1))
+                # SnowFlakes(),
+            ]
+        ), 
+        render_effects=Effects(
+            [
+                SaltAndPepper(p=0.3,noise=0.003),
+                SnowFlakes(p=0.2),
+                JpegCompression(level=2)
+            ]
+        )
+    )
 
 
 # 2.randomly get words from dict Line.
@@ -247,6 +295,41 @@ def bank_chars_wide_1000000():
     )
 
 
+#4. for anir
+def chars_20000():
+    return base_cfg(
+        inspect.currentframe().f_code.co_name,
+        num=20000,
+        corpus=bk_enum_wide_corpus(),
+        # corpus=enum_data(),
+        layout=ExtraTextLineLayout(bottom_prob=1.0),
+        corpus_effects=Effects(
+            [
+                Padding(p=1, w_ratio=[0.0, 0.21], h_ratio=[0.0, 0.21], center=False),
+                Line(p=0.2, thickness=(1, 3), line_pos_p=(0.5, 0.5, 0, 0, 0, 0, 0, 0, 0, 0)),
+                # Emboss(p=0.01,alpha=(0.9, 1.0), strength=(1.5, 1.6)),
+                DropoutHorizontal(p=0.3, num_line=2, thickness=1),
+                # DropoutVertical(p=0.2, num_line=3, thickness=1),
+                # MotionBlur(p=0.05, k=(3, 3), angle=(0, 360), direction=(-1.0, 1.0)),
+                # Snow(p=0,level=1),
+                # CoarseDropout(p=0.7,noise=0.03, size_percent=0.5),
+
+                # DropoutRand(p=1, dropout_p=(0.3, 0.5)),
+                # JpegCompression(level=2)
+                # ImgAugEffect(aug=iaa.imgcorruptlike.JpegCompression(severity=1))
+                SnowFlakes(),
+            ]
+        ), 
+        render_effects=Effects(
+            [
+                SaltAndPepper(p=0.4,noise=0.003),
+                SnowFlakes(p=0.2),
+                JpegCompression(level=2)
+            ]
+        )
+    )
+
+
 # fmt: off
 # The configuration file must have a configs variable
 configs = [
@@ -257,9 +340,11 @@ configs = [
     # same_line_data(),
     # extra_text_line_data(),
 
-    # random_chars_2000000(),
-    bank_chars_aof_1000000(),
-    bank_chars_wide_1000000()
+    # random_chars_500000(),
+    # bank_chars_aof_1000000(),
+    # bank_chars_wide_1000000(),
+    random_chars_1000000_CN()
+    # chars_20000()
 ]
 # fmt: on
 
@@ -273,19 +358,13 @@ configs = [
 
 #todo:
 
-
-#doing
-
+#doing:
 
 #done:
 #1. emboss
 #2. snow
 # 1. visualize
 # 2. lbl converter
-
-
-
-
 
 
 

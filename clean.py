@@ -31,8 +31,8 @@ if __name__=="__main__":
     print(pp)
 
     for pth in pp:
-        print("pth---->", pth)
-        os.system("python vis.py --look "+ pth + "images")
+        print("pth---->", pth) # example_data/output/chars_2000/
+        os.system("python vis.py --look "+ pth + "images")    #--look example_data/output/chars_2000/images
 
 
 
