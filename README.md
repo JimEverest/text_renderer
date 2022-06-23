@@ -1,3 +1,6 @@
+# Default Freq: 10
+ utils.py line#197                # freq=10
+
 # Text Renderer
 Generate text line images for training deep learning OCR model (e.g. [CRNN](https://github.com/bgshih/crnn)). ![example](./image/example.gif)
 

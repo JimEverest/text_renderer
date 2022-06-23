@@ -2,7 +2,8 @@ import inspect
 import os
 from pathlib import Path
 import imgaug.augmenters as iaa
-
+# from text_renderer.corpus.customize_HKID_CTC_corpus import CustomizeHKID_CTC_Corpus, CustomizeHKID_CTC_CorpusCfg
+                                                           
 from text_renderer.effect import *
 from text_renderer.corpus import *
 from text_renderer.config import (
@@ -23,7 +24,7 @@ OUT_DIR = CURRENT_DIR / "output"
 DATA_DIR = CURRENT_DIR
 BG_DIR = DATA_DIR / "bg"
 CHAR_DIR = DATA_DIR / "char"
-FONT_DIR = DATA_DIR / "font_cn"
+FONT_DIR = DATA_DIR / "font_hk_digits"
 FONT_LIST_DIR = DATA_DIR / "font_list"
 TEXT_DIR = DATA_DIR / "text"
 
@@ -101,6 +102,22 @@ def base_cfg(name: str, corpus, corpus_effects=None, layout_effects=None, layout
 
 
 #========================== Corpus ==========================
+#0. customised HKID CTC digits corpus:
+def get_HK_CTC_corpus():
+    return CustomizeHKID_CTC_Corpus(
+            CustomizeHKID_CTC_CorpusCfg(
+            chars_file=TEXT_DIR / "10Digits.txt", 
+            length=(5, 10),
+#         filter_by_chars=True,
+#         chars_file=TEXT_DIR / "en_dict.txt",
+            char_spacing=(-0.05, 0.2),
+            text_color_cfg =FixedTextColorCfg(),
+            **font_cfg),
+    )
+
+    
+
+
 # 1. Rand: ----> chars
 def get_en_char_corpus():
     return RandCorpus(
@@ -118,8 +135,8 @@ def get_en_char_corpus():
 def get_cn_char_corpus():
     return RandCorpus(
             RandCorpusCfg(
-            chars_file=TEXT_DIR / "96_rare_cnhk.txt", #"ppocr_keys_v1.txt", 
-            length=(1, 10),
+            chars_file=TEXT_DIR / "10Digits_4Symbols.txt", #"96_char_en_dict.txt", #"hkid_all_v1_999.txt", #"187_confusion_chars.txt", #"96rare_300FirstName.txt",
+            length=(4, 12),
 #         filter_by_chars=True,
             char_spacing=(-0.05, 0.2),
             text_color_cfg =FixedTextColorCfg(),
@@ -191,12 +208,50 @@ def random_chars_500000():
         )
     )
 
-
+    random_chars_30w_NumChars(),
+    random_chars_30w_NumChars(),
+   
 # 1.1 Rand: ----> chars 【CN】
-def random_chars_1000000_CN():
+def hk_ctc_digits_10w():
     return base_cfg(
         inspect.currentframe().f_code.co_name,
-        num=1000000,
+        num=100000,
+        corpus=get_HK_CTC_corpus(),
+        # corpus=enum_data(),
+        layout=ExtraTextLineLayout(bottom_prob=1.0),
+        corpus_effects=Effects(
+            [
+                Padding(p=1, w_ratio=[0.0, 0.21], h_ratio=[0.0, 0.21], center=False),
+                Line(p=0.2, thickness=(1, 3), line_pos_p=(0.5, 0.5, 0, 0, 0, 0, 0, 0, 0, 0)),
+                # Emboss(p=0.9,alpha=(0.9, 1.0), strength=(1.5, 1.6)),
+                # DropoutRand(p=1, dropout_p=(0.3, 0.5)),
+                DropoutHorizontal(p=0.5, num_line=2, thickness=1),
+                MotionBlur(p=0.1, k=(3, 3), angle=(0, 360), direction=(-1.0, 1.0)),
+                
+                Snow(p=0,level=1),
+                CoarseDropout(p=0.7,noise=0.03, size_percent=0.5),
+                # JpegCompression(level=2)
+                # ImgAugEffect(aug=iaa.imgcorruptlike.JpegCompression(severity=1))
+                # SnowFlakes(),
+            ]
+        ), 
+        render_effects=Effects(
+            [
+                SaltAndPepper(p=0.3,noise=0.003),
+                SnowFlakes(p=0.2),
+                JpegCompression(level=2)
+            ]
+        )
+    )
+
+
+
+
+# 1.1 Rand: ----> chars 【CN】
+def random_chars_20w_NumChars():
+    return base_cfg(
+        inspect.currentframe().f_code.co_name,
+        num=200000,
         corpus=get_cn_char_corpus(),
         # corpus=enum_data(),
         layout=ExtraTextLineLayout(bottom_prob=1.0),
@@ -343,7 +398,8 @@ configs = [
     # random_chars_500000(),
     # bank_chars_aof_1000000(),
     # bank_chars_wide_1000000(),
-    random_chars_1000000_CN()
+    random_chars_20w_NumChars(),
+    # hk_ctc_digits_10w(),
     # chars_20000()
 ]
 # fmt: on
